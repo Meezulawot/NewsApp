@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">NewsApp</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="news">All News</string>
+    <string name="local">Local</string>
+    <string name="saved">Saved</string>
+    <string name="home">Home</string>
+    <string name="title">Title</string>
+    <string name="source">Source</string>
+    <string name="published_at">Published at</string>
+</resources>
