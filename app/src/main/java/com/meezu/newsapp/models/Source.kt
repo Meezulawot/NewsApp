@@ -1,4 +1,4 @@
-package com.meezu.newsapp
+package com.meezu.newsapp.models
 
 data class Source(
     val id: String,
