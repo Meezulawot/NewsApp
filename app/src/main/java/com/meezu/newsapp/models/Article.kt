@@ -2,20 +2,44 @@ package com.meezu.newsapp.models
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.google.gson.annotations.Expose
+import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
 @Entity(
     tableName = "articles"
 )
 data class Article(
-    @PrimaryKey(autoGenerate = true)
-    var id: Int? = null,
-    val author: String,
-    val content: String,
-    val description: String,
-    val publishedAt: String,
-    val source: Source,
-    val title: String,
-    val url: String,
-    val urlToImage: String
-): Serializable
+    @PrimaryKey
+    var url: String,
+
+    @SerializedName("author")
+    @Expose
+    var author: String? = null,
+
+    @SerializedName("content")
+    @Expose
+    var content: String? = null,
+
+    @SerializedName("description")
+    @Expose
+    var description: String? = null,
+
+    @SerializedName("publishedAt")
+    @Expose
+    var publishedAt: String? = null,
+
+    @SerializedName("source")
+    @Expose
+    var source: Source? = null,
+
+    @SerializedName("title")
+    @Expose
+    var title: String? = null,
+
+    @SerializedName("urlToImage")
+    @Expose
+    var urlToImage: String? = null,
+
+
+) : Serializable

@@ -7,7 +7,7 @@ import com.meezu.newsapp.models.Source
 class Converters {
 
     @TypeConverter
-    fun fromSourceToString(source: Source): String{
+    fun fromSourceToString(source: Source): String?{
         return source.name
     }
 

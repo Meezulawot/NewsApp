@@ -10,7 +10,8 @@ import com.meezu.newsapp.utils.constants.StringConstants
 
 @Database(
     entities = [Article::class],
-    version = 1
+    version = 3,
+    exportSchema = false
 )
 
 @TypeConverters(Converters::class)

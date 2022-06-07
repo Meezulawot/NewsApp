@@ -4,9 +4,15 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="news">All News</string>
     <string name="local">Local</string>
+    <string name="search">Search</string>
     <string name="saved">Saved</string>
+    <string name="saved_news">Saved News</string>
     <string name="home">Home</string>
     <string name="title">Title</string>
     <string name="source">Source</string>
     <string name="published_at">Published at</string>
+    <string name="search_hint">Search...</string>
+    <string name="error_message">Error Message</string>
+    <string name="retry">Retry</string>
+    <string name="trending_news">Trending News</string>
 </resources>

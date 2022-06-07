@@ -8,11 +8,11 @@ import com.meezu.newsapp.models.Article
 interface ArticleDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertArticles(article :Article)
+    suspend fun saveArticles(article :Article): Long
 
     @Query("Select * From articles")
-    fun getNewsArticles(): LiveData<List<Article>>
+    fun getSavedNewsArticles(): LiveData<List<Article>>
 
     @Delete
-    suspend fun deleteArticle(article: Article)
+    suspend fun deleteSavedArticle(article: Article)
 }

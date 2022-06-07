@@ -4,33 +4,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/panache_shade"
-    tools:context=".ui.fragment.NewsFragment">
+    tools:context=".ui.fragment.SearchFragment">
 
-    <TextView
-        android:id="@+id/tvTrendingNews"
+    <EditText
+        android:id="@+id/etSearch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/trending_news"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:textColor="@android:color/black"
-        android:layout_margin="8dp"/>
+        android:hint="@string/search_hint"
+        android:layout_margin="5dp"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvNews"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/tvTrendingNews"/>
-
-    <include
-        android:id="@+id/itemErrorMessage"
-        layout="@layout/layout_error_message"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:visibility="invisible"
-        android:layout_centerInParent="true"/>
+        android:layout_below="@+id/etSearch"/>
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -40,5 +27,6 @@
         android:layout_centerInParent="true"
         android:background="@android:color/transparent"
         android:visibility="invisible" />
+
 
 </RelativeLayout>

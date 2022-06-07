@@ -1,39 +1,39 @@
 package com.meezu.newsapp.ui.fragment
 
 import android.os.Bundle
-import android.os.Handler
+import android.util.Log
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.fragment.app.Fragment
+import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
 import com.meezu.newsapp.R
 import com.meezu.newsapp.adapter.NewsAdapter
-import com.meezu.newsapp.databinding.FragmentNewsBinding
+import com.meezu.newsapp.databinding.FragmentSearchBinding
 import com.meezu.newsapp.models.Article
 import com.meezu.newsapp.ui.NewsActivity
 import com.meezu.newsapp.ui.NewsViewModel
 import com.meezu.newsapp.utils.Resource
 import com.meezu.newsapp.utils.constants.StringConstants
 
+class SearchFragment : Fragment(), NewsAdapter.ClickListener {
 
-class NewsFragment : Fragment(), NewsAdapter.ClickListener {
-
-    private lateinit var binding: FragmentNewsBinding
+    private lateinit var binding: FragmentSearchBinding
     private lateinit var viewModel: NewsViewModel
     private lateinit var newsAdapter: NewsAdapter
-    val handler = Handler()
-    val TAG = "NewsFragment"
+
+    val TAG = "SearchFragment"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentNewsBinding.inflate(layoutInflater, container, false)
+        binding = FragmentSearchBinding.inflate(layoutInflater, container, false)
         return (binding.root)
     }
 
@@ -42,29 +42,16 @@ class NewsFragment : Fragment(), NewsAdapter.ClickListener {
         viewModel = (activity as NewsActivity).viewModel
         setRecyclerView()
         setViewModelObserver()
-        refresh.run()
 
-    }
-
-    val refresh: Runnable = object : Runnable {
-        override fun run() {
-            viewModel.getTrendingNews("us")
-//            Toast.makeText(context, "refreshing...", Toast.LENGTH_SHORT).show()
-            handler.postDelayed(this, 60000)
-        }
-    }
-
-    private fun setRecyclerView() {
-        newsAdapter = NewsAdapter(requireContext(), this)
-        binding.rvNews.apply {
-            adapter = newsAdapter
-            layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        binding.etSearch.addTextChangedListener { editable ->
+            if (editable.toString().isNotEmpty()) {
+                viewModel.searchNews(editable.toString())
+            }
         }
     }
 
     private fun setViewModelObserver() {
-
-        viewModel.news.observe(viewLifecycleOwner, Observer { response ->
+        viewModel.searchNews.observe(viewLifecycleOwner, Observer { response ->
             when (response) {
                 is Resource.Success -> {
                     hideProgressBar()
@@ -75,10 +62,7 @@ class NewsFragment : Fragment(), NewsAdapter.ClickListener {
                 is Resource.Error -> {
                     hideProgressBar()
                     response.message?.let { message ->
-                        Snackbar.make(requireView(), message, Snackbar.LENGTH_LONG)
-                            .setAction("Retry") {
-                                viewModel.getTrendingNews("us")
-                            }.show()
+                        Snackbar.make(requireView(), message, Snackbar.LENGTH_LONG).show()
                     }
                 }
                 is Resource.Loading -> {
@@ -96,15 +80,27 @@ class NewsFragment : Fragment(), NewsAdapter.ClickListener {
         binding.progressBar.visibility = View.VISIBLE
     }
 
+    private fun setRecyclerView() {
+        newsAdapter = NewsAdapter(requireContext(), this)
+        binding.rvNews.layoutManager =
+            LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        binding.rvNews.adapter = newsAdapter
+    }
+
     override fun onclick(article: Article) {
+//        Toast.makeText(context, article.url, Toast.LENGTH_SHORT).show()
         val bundle = Bundle()
         bundle.putSerializable(StringConstants.Article, article)
         findNavController().navigate(R.id.articleFragment, bundle)
     }
 
-    override fun onPause() {
-        super.onPause()
-        handler.removeCallbacks(refresh);
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        activity?.findViewById<BottomNavigationView>(R.id.bottomNavigationView)?.visibility = View.GONE
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        activity?.findViewById<BottomNavigationView>(R.id.bottomNavigationView)?.visibility = View.VISIBLE
+    }
 }
