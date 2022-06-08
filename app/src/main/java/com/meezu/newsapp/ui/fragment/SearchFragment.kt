@@ -1,16 +1,15 @@
 package com.meezu.newsapp.ui.fragment
 
+import android.app.ActionBar
 import android.os.Bundle
 import android.util.Log
+import android.view.*
+import android.widget.SearchView
+import androidx.core.view.MenuItemCompat
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
 import com.meezu.newsapp.R
 import com.meezu.newsapp.adapter.NewsAdapter
@@ -20,14 +19,14 @@ import com.meezu.newsapp.ui.NewsActivity
 import com.meezu.newsapp.ui.NewsViewModel
 import com.meezu.newsapp.utils.Resource
 import com.meezu.newsapp.utils.constants.StringConstants
+import java.util.*
+
 
 class SearchFragment : Fragment(), NewsAdapter.ClickListener {
 
-    private lateinit var binding: FragmentSearchBinding
+    private lateinit var binding : FragmentSearchBinding
     private lateinit var viewModel: NewsViewModel
     private lateinit var newsAdapter: NewsAdapter
-
-    val TAG = "SearchFragment"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,11 +42,6 @@ class SearchFragment : Fragment(), NewsAdapter.ClickListener {
         setRecyclerView()
         setViewModelObserver()
 
-        binding.etSearch.addTextChangedListener { editable ->
-            if (editable.toString().isNotEmpty()) {
-                viewModel.searchNews(editable.toString())
-            }
-        }
     }
 
     private fun setViewModelObserver() {
@@ -63,6 +57,7 @@ class SearchFragment : Fragment(), NewsAdapter.ClickListener {
                     hideProgressBar()
                     response.message?.let { message ->
                         Snackbar.make(requireView(), message, Snackbar.LENGTH_LONG).show()
+                        Log.e("SearchFragment", message)
                     }
                 }
                 is Resource.Loading -> {
@@ -88,7 +83,6 @@ class SearchFragment : Fragment(), NewsAdapter.ClickListener {
     }
 
     override fun onclick(article: Article) {
-//        Toast.makeText(context, article.url, Toast.LENGTH_SHORT).show()
         val bundle = Bundle()
         bundle.putSerializable(StringConstants.Article, article)
         findNavController().navigate(R.id.articleFragment, bundle)
@@ -96,11 +90,36 @@ class SearchFragment : Fragment(), NewsAdapter.ClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        activity?.findViewById<BottomNavigationView>(R.id.bottomNavigationView)?.visibility = View.GONE
+        setHasOptionsMenu(true)
+
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        activity?.findViewById<BottomNavigationView>(R.id.bottomNavigationView)?.visibility = View.VISIBLE
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.app_bar_menu, menu)
+        val shareItem = menu.findItem(R.id.action_share)
+        val saveItem = menu.findItem(R.id.action_save)
+        shareItem.isVisible = false;
+        saveItem.isVisible = false;
+
+        val searchViewItem = menu.findItem(R.id.action_search)
+        val searchView: SearchView = MenuItemCompat.getActionView(searchViewItem) as SearchView
+        searchView.isIconifiedByDefault = false
+        searchView.queryHint = StringConstants.search_hint
+
+        searchView.setOnQueryTextListener(
+            object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String): Boolean {
+                    viewModel.searchNews(query)
+                    return false
+                }
+
+                override fun onQueryTextChange(newText: String): Boolean {
+                    viewModel.searchNews(newText)
+                    return false
+                }
+            })
+
+        return super.onCreateOptionsMenu(menu, inflater)
     }
+
 }

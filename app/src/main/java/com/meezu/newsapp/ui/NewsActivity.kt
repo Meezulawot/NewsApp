@@ -2,9 +2,11 @@ package com.meezu.newsapp.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentContainer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavDestination
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
@@ -33,5 +35,6 @@ class NewsActivity : AppCompatActivity() {
         binding.bottomNavigationView.setupWithNavController(navController)
 
     }
+
 
 }

@@ -22,12 +22,12 @@ class NewsAdapter(
             fun bindItem(article: Article){
                 binding.tvTitle.text = article.title
                 binding.tvSource.text = article.source!!.name
-                binding.tvPublishedAt.text = article.publishedAt
+//                binding.tvPublishedAt.text = article.publishedAt
                 Glide.with(context).load(article.urlToImage).into(binding.imgArticle)
 
-//                binding.root.setOnClickListener {
-//                    listener.onclick(article)
-//                }
+                binding.root.setOnClickListener {
+                    listener.onclick(article)
+                }
             }
         }
 
@@ -56,9 +56,9 @@ class NewsAdapter(
     override fun onBindViewHolder(holder: ArticleViewHolder, position: Int) {
         val article = differ.currentList[position]
         holder.bindItem(article)
-        holder.binding.root.setOnClickListener {
-            listener.onclick(article)
-        }
+//        holder.binding.root.setOnClickListener {
+//            listener.onclick(article)
+//        }
     }
 
     override fun getItemCount(): Int {

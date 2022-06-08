@@ -10,8 +10,6 @@ class NewsRepository (
 
     suspend fun getTrendingNews(countryCode: String)= RetrofitInstance.getApiInstance()!!.getTrendingNews(countryCode)
 
-    suspend fun getAllNews()= RetrofitInstance.getApiInstance()!!.getAllNewsArticles()
-
     suspend fun searchNews(searchQuery: String) = RetrofitInstance.getApiInstance()!!.getSearchedNews(searchQuery)
 
     suspend fun insertArticles(article: Article) = db.getArticleDao().saveArticles(article)

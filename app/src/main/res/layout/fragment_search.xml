@@ -6,18 +6,10 @@
     android:layout_height="match_parent"
     tools:context=".ui.fragment.SearchFragment">
 
-    <EditText
-        android:id="@+id/etSearch"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/search_hint"
-        android:layout_margin="5dp"/>
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvNews"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/etSearch"/>
+        android:layout_height="wrap_content" />
 
     <ProgressBar
         android:id="@+id/progressBar"

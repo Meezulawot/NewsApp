@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.meezu.newsapp.R
 import com.meezu.newsapp.adapter.NewsAdapter
+import com.meezu.newsapp.databinding.FragmentNewsBinding
 import com.meezu.newsapp.databinding.FragmentSavedNewsBinding
 import com.meezu.newsapp.models.Article
 import com.meezu.newsapp.ui.NewsActivity
@@ -22,7 +23,7 @@ import com.meezu.newsapp.utils.constants.StringConstants
 
 class SavedNewsFragment : Fragment(), NewsAdapter.ClickListener {
 
-    private lateinit var binding: FragmentSavedNewsBinding
+    private lateinit var binding : FragmentSavedNewsBinding
     private lateinit var viewModel: NewsViewModel
     private lateinit var newsAdapter: NewsAdapter
 
@@ -43,6 +44,7 @@ class SavedNewsFragment : Fragment(), NewsAdapter.ClickListener {
     }
 
     private fun setViewModelObserver(){
+
         viewModel.getSavedNews().observe(viewLifecycleOwner, Observer { response ->
             newsAdapter.differ.submitList(response)
         })
@@ -63,7 +65,7 @@ class SavedNewsFragment : Fragment(), NewsAdapter.ClickListener {
                 val position = viewHolder.adapterPosition
                 val article = newsAdapter.differ.currentList[position]
                 viewModel.deleteSavedNews(article)
-                Snackbar.make(requireView(), "Deleted", Snackbar.LENGTH_LONG).apply {
+                Snackbar.make(requireView(), StringConstants.delete_message, Snackbar.LENGTH_LONG).apply {
                     setAction("Undo") {
                         viewModel.saveNews(article)
                     }
@@ -89,4 +91,5 @@ class SavedNewsFragment : Fragment(), NewsAdapter.ClickListener {
         bundle.putSerializable(StringConstants.Article, article)
         findNavController().navigate(R.id.articleFragment, bundle)
     }
+
 }

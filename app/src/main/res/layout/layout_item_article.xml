@@ -47,18 +47,18 @@
             android:layout_toEndOf="@id/imgArticle"
             android:layout_alignParentBottom="true"/>
 
-        <TextView
-            android:id="@+id/tvPublishedAt"
-            android:layout_width="70dp"
-            android:layout_height="wrap_content"
-            android:layout_marginVertical="5dp"
-            android:layout_marginHorizontal="7dp"
-            android:text="@string/published_at"
-            android:ellipsize="end"
-            android:maxLines="1"
-            android:textSize="13sp"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"/>
+<!--        <TextView-->
+<!--            android:id="@+id/tvPublishedAt"-->
+<!--            android:layout_width="70dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginVertical="5dp"-->
+<!--            android:layout_marginHorizontal="7dp"-->
+<!--            android:text="@string/published_at"-->
+<!--            android:ellipsize="end"-->
+<!--            android:maxLines="1"-->
+<!--            android:textSize="13sp"-->
+<!--            android:layout_alignParentEnd="true"-->
+<!--            android:layout_alignParentBottom="true"/>-->
 
     </RelativeLayout>
 

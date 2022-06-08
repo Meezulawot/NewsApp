@@ -14,43 +14,38 @@ import com.meezu.newsapp.models.NewsResponse
 import com.meezu.newsapp.repository.NewsRepository
 import com.meezu.newsapp.utils.NewsApplication
 import com.meezu.newsapp.utils.Resource
+import com.meezu.newsapp.utils.constants.StringConstants
 import kotlinx.coroutines.launch
 import retrofit2.Response
 import java.io.IOException
 
 class NewsViewModel(
     application: Application,
-    val newsRepository: NewsRepository
+    private val newsRepository: NewsRepository
 ) : AndroidViewModel(application){
 
     val news: MutableLiveData<Resource<NewsResponse>> = MutableLiveData()
     val searchNews: MutableLiveData<Resource<NewsResponse>> = MutableLiveData()
 
     init {
-        getTrendingNews("us")
+        getTrendingNews(StringConstants.country_code)
     }
 
-    fun getTrendingNews(countryCode: String) = viewModelScope.launch {
+    fun getTrendingNews(country: String) = viewModelScope.launch {
         news.postValue(Resource.Loading())
         try {
             if(checkInternetConnection()) {
-                val response = newsRepository.getTrendingNews(countryCode)
+                val response = newsRepository.getTrendingNews(country)
                 news.postValue(handleNewsResponse(response))
             } else {
-                news.postValue(Resource.Error("No internet connection"))
+                news.postValue(Resource.Error(StringConstants.network_error))
             }
         } catch(e: Throwable) {
             when(e) {
-                is IOException -> news.postValue(Resource.Error("Network Failure"))
-                else -> news.postValue(Resource.Error("Conversion Error"))
+                is IOException -> news.postValue(Resource.Error(StringConstants.network_failure))
+                else -> news.postValue(Resource.Error(StringConstants.conversion_error))
             }
         }
-    }
-
-    private fun getAllNews() = viewModelScope.launch {
-        news.postValue(Resource.Loading())
-        val response = newsRepository.getAllNews()
-        news.postValue(handleNewsResponse(response))
     }
 
     fun searchNews(searchQuery: String) = viewModelScope.launch {
@@ -60,12 +55,12 @@ class NewsViewModel(
                 val response = newsRepository.searchNews(searchQuery)
                 searchNews.postValue(handleNewsResponse(response))
             } else {
-                searchNews.postValue(Resource.Error("No internet connection"))
+                searchNews.postValue(Resource.Error(StringConstants.network_error))
             }
         } catch(t: Throwable) {
             when(t) {
-                is IOException -> searchNews.postValue(Resource.Error("Network Failure"))
-                else -> searchNews.postValue(Resource.Error("Conversion Error"))
+                is IOException -> searchNews.postValue(Resource.Error(StringConstants.network_failure))
+                else -> searchNews.postValue(Resource.Error(StringConstants.conversion_error))
             }
         }
     }

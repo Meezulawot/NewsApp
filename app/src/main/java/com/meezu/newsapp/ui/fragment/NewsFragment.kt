@@ -1,11 +1,10 @@
 package com.meezu.newsapp.ui.fragment
 
+import android.annotation.SuppressLint
+import android.opengl.Visibility
 import android.os.Bundle
 import android.os.Handler
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.Toast
+import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -20,14 +19,12 @@ import com.meezu.newsapp.ui.NewsViewModel
 import com.meezu.newsapp.utils.Resource
 import com.meezu.newsapp.utils.constants.StringConstants
 
-
 class NewsFragment : Fragment(), NewsAdapter.ClickListener {
 
-    private lateinit var binding: FragmentNewsBinding
+    private lateinit var binding : FragmentNewsBinding
     private lateinit var viewModel: NewsViewModel
     private lateinit var newsAdapter: NewsAdapter
     val handler = Handler()
-    val TAG = "NewsFragment"
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -46,10 +43,9 @@ class NewsFragment : Fragment(), NewsAdapter.ClickListener {
 
     }
 
-    val refresh: Runnable = object : Runnable {
+    private val refresh: Runnable = object : Runnable {
         override fun run() {
-            viewModel.getTrendingNews("us")
-//            Toast.makeText(context, "refreshing...", Toast.LENGTH_SHORT).show()
+            viewModel.getTrendingNews(StringConstants.country_code)
             handler.postDelayed(this, 60000)
         }
     }
@@ -68,6 +64,7 @@ class NewsFragment : Fragment(), NewsAdapter.ClickListener {
             when (response) {
                 is Resource.Success -> {
                     hideProgressBar()
+                    hideErrorMessage()
                     response.data?.let { newsResponse ->
                         newsAdapter.differ.submitList(newsResponse.articles)
                     }
@@ -75,10 +72,8 @@ class NewsFragment : Fragment(), NewsAdapter.ClickListener {
                 is Resource.Error -> {
                     hideProgressBar()
                     response.message?.let { message ->
-                        Snackbar.make(requireView(), message, Snackbar.LENGTH_LONG)
-                            .setAction("Retry") {
-                                viewModel.getTrendingNews("us")
-                            }.show()
+                        Snackbar.make(requireView(), message, Snackbar.LENGTH_SHORT).show()
+                        showErrorMessage(message)
                     }
                 }
                 is Resource.Loading -> {
@@ -86,6 +81,10 @@ class NewsFragment : Fragment(), NewsAdapter.ClickListener {
                 }
             }
         })
+
+        binding.itemErrorMessage.btnRetry.setOnClickListener {
+            viewModel.getTrendingNews(StringConstants.country_code)
+        }
     }
 
     private fun hideProgressBar() {
@@ -94,6 +93,15 @@ class NewsFragment : Fragment(), NewsAdapter.ClickListener {
 
     private fun showProgressBar() {
         binding.progressBar.visibility = View.VISIBLE
+    }
+
+    private fun hideErrorMessage() {
+        binding.itemErrorMessage.root.visibility = View.GONE
+    }
+
+    private fun showErrorMessage(message: String) {
+        binding.itemErrorMessage.root.visibility = View.VISIBLE
+        binding.itemErrorMessage.tvErrorMessage.text = message
     }
 
     override fun onclick(article: Article) {
