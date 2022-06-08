@@ -126,4 +126,9 @@ class SearchFragment : Fragment(), NewsAdapter.ClickListener {
         return super.onCreateOptionsMenu(menu, inflater)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        (activity as AppCompatActivity).supportActionBar?.title = StringConstants.app_name;
+    }
+
 }

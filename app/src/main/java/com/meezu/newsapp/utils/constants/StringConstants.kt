@@ -5,6 +5,7 @@ object StringConstants {
     const val Database_Name = "NewsArticle_db"
     const val Article = "article"
     const val Country = "country"
+    const val app_name = "NewsApp"
 
     const val country_code = "us"
     const val search_hint = "Search..."
