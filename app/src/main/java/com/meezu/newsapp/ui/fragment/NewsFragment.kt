@@ -31,6 +31,7 @@ class NewsFragment : Fragment(), NewsAdapter.ClickListener {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentNewsBinding.inflate(layoutInflater, container, false)
+
         return (binding.root)
     }
 
@@ -46,7 +47,7 @@ class NewsFragment : Fragment(), NewsAdapter.ClickListener {
     private val refresh: Runnable = object : Runnable {
         override fun run() {
             viewModel.getTrendingNews(StringConstants.country_code)
-            handler.postDelayed(this, 60000)
+            handler.postDelayed(this, 5 * 60000)
         }
     }
 

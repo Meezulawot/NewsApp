@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.widget.SearchView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuItemCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -32,12 +33,14 @@ class SearchFragment : Fragment(), NewsAdapter.ClickListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
         binding = FragmentSearchBinding.inflate(layoutInflater, container, false)
         return (binding.root)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        (activity as AppCompatActivity).supportActionBar?.title = "";
         viewModel = (activity as NewsActivity).viewModel
         setRecyclerView()
         setViewModelObserver()
@@ -90,6 +93,7 @@ class SearchFragment : Fragment(), NewsAdapter.ClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setHasOptionsMenu(true)
 
     }
