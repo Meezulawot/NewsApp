@@ -6,7 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.widget.addTextChangedListener
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,6 +27,7 @@ class SavedNewsFragment : Fragment(), NewsAdapter.ClickListener {
 
     private lateinit var binding : FragmentSavedNewsBinding
     private lateinit var viewModel: NewsViewModel
+    private lateinit var sharedViewModel: SharedViewModel
     private lateinit var newsAdapter: NewsAdapter
 
     override fun onCreateView(
@@ -32,19 +35,19 @@ class SavedNewsFragment : Fragment(), NewsAdapter.ClickListener {
         savedInstanceState: Bundle?
     ): View {
 
-        binding = FragmentSavedNewsBinding.inflate(layoutInflater, container, false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_saved_news, container, false)
         return (binding.root)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = (activity as NewsActivity).viewModel
+        viewModel = ViewModelProvider(requireActivity()).get(NewsViewModel::class.java)
+        sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
         setViewModelObserver()
         setRecyclerView()
     }
 
     private fun setViewModelObserver(){
-
         viewModel.getSavedNews().observe(viewLifecycleOwner, Observer { response ->
             newsAdapter.differ.submitList(response)
         })
@@ -87,9 +90,8 @@ class SavedNewsFragment : Fragment(), NewsAdapter.ClickListener {
     }
 
     override fun onclick(article: Article) {
-        val bundle = Bundle()
-        bundle.putSerializable(StringConstants.Article, article)
-        findNavController().navigate(R.id.articleFragment, bundle)
+       sharedViewModel.shareMessage(article)
+        findNavController().navigate(R.id.articleFragment)
     }
 
 }

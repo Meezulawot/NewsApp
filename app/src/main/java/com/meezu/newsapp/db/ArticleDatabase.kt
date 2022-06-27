@@ -34,6 +34,5 @@ abstract class ArticleDatabase : RoomDatabase() {
                 ArticleDatabase::class.java,
                 StringConstants.Database_Name
             ).fallbackToDestructiveMigration().build()
-
     }
 }

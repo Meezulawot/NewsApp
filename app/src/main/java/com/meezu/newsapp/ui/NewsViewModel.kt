@@ -22,7 +22,7 @@ import java.io.IOException
 class NewsViewModel(
     application: Application,
     private val newsRepository: NewsRepository
-) : AndroidViewModel(application){
+) : AndroidViewModel(application) {
 
     val news: MutableLiveData<Resource<NewsResponse>> = MutableLiveData()
     val searchNews: MutableLiveData<Resource<NewsResponse>> = MutableLiveData()
@@ -34,14 +34,14 @@ class NewsViewModel(
     fun getTrendingNews(country: String) = viewModelScope.launch {
         news.postValue(Resource.Loading())
         try {
-            if(checkInternetConnection()) {
+            if (checkInternetConnection()) {
                 val response = newsRepository.getTrendingNews(country)
-                news.postValue(handleNewsResponse(response))
+                    news.postValue(handleNewsResponse(response))
             } else {
                 news.postValue(Resource.Error(StringConstants.network_error))
             }
-        } catch(e: Throwable) {
-            when(e) {
+        } catch (e: Throwable) {
+            when (e) {
                 is IOException -> news.postValue(Resource.Error(StringConstants.network_failure))
                 else -> news.postValue(Resource.Error(StringConstants.conversion_error))
             }
@@ -51,14 +51,14 @@ class NewsViewModel(
     fun searchNews(searchQuery: String) = viewModelScope.launch {
         searchNews.postValue(Resource.Loading())
         try {
-            if(checkInternetConnection()) {
+            if (checkInternetConnection()) {
                 val response = newsRepository.searchNews(searchQuery)
                 searchNews.postValue(handleNewsResponse(response))
             } else {
                 searchNews.postValue(Resource.Error(StringConstants.network_error))
             }
-        } catch(t: Throwable) {
-            when(t) {
+        } catch (t: Throwable) {
+            when (t) {
                 is IOException -> searchNews.postValue(Resource.Error(StringConstants.network_failure))
                 else -> searchNews.postValue(Resource.Error(StringConstants.conversion_error))
             }
@@ -71,12 +71,12 @@ class NewsViewModel(
 
     fun getSavedNews() = newsRepository.getSavedArticles()
 
-    fun deleteSavedNews(article: Article) = viewModelScope.launch{
+    fun deleteSavedNews(article: Article) = viewModelScope.launch {
         newsRepository.deleteSavedArticles(article)
     }
 
-    private fun handleNewsResponse(response: Response<NewsResponse>) : Resource<NewsResponse> {
-        if(response.isSuccessful) {
+    private fun handleNewsResponse(response: Response<NewsResponse>): Resource<NewsResponse> {
+        if (response.isSuccessful) {
             response.body()?.let { resultResponse ->
                 return Resource.Success(resultResponse)
             }
@@ -86,11 +86,13 @@ class NewsViewModel(
 
     @Suppress("DEPRECATION")
     private fun checkInternetConnection(): Boolean {
-        val connectivityManager = getApplication<NewsApplication>().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val connectivityManager =
+            getApplication<NewsApplication>().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             val activeNetwork = connectivityManager.activeNetwork ?: return false
-            val capabilities = connectivityManager.getNetworkCapabilities(activeNetwork) ?: return false
+            val capabilities =
+                connectivityManager.getNetworkCapabilities(activeNetwork) ?: return false
             return when {
                 capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
                 capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
@@ -99,7 +101,7 @@ class NewsViewModel(
             }
         } else {
             connectivityManager.activeNetworkInfo?.run {
-                return when(type) {
+                return when (type) {
                     ConnectivityManager.TYPE_WIFI -> true
                     ConnectivityManager.TYPE_MOBILE -> true
                     ConnectivityManager.TYPE_ETHERNET -> true

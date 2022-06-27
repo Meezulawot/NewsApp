@@ -5,8 +5,10 @@ import android.opengl.Visibility
 import android.os.Bundle
 import android.os.Handler
 import android.view.*
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
@@ -23,6 +25,7 @@ class NewsFragment : Fragment(), NewsAdapter.ClickListener {
 
     private lateinit var binding : FragmentNewsBinding
     private lateinit var viewModel: NewsViewModel
+    private lateinit var sharedViewModel: SharedViewModel
     private lateinit var newsAdapter: NewsAdapter
     val handler = Handler()
 
@@ -30,14 +33,14 @@ class NewsFragment : Fragment(), NewsAdapter.ClickListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentNewsBinding.inflate(layoutInflater, container, false)
-
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_news, container, false)
         return (binding.root)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = (activity as NewsActivity).viewModel
+        viewModel = ViewModelProvider(requireActivity()).get(NewsViewModel::class.java)
+        sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
         setRecyclerView()
         setViewModelObserver()
         refresh.run()
@@ -83,9 +86,9 @@ class NewsFragment : Fragment(), NewsAdapter.ClickListener {
             }
         })
 
-        binding.itemErrorMessage.btnRetry.setOnClickListener {
-            viewModel.getTrendingNews(StringConstants.country_code)
-        }
+//        binding.itemErrorMessage.btnRetry.setOnClickListener {
+//            viewModel.getTrendingNews(StringConstants.country_code)
+//        }
     }
 
     private fun hideProgressBar() {
@@ -97,18 +100,17 @@ class NewsFragment : Fragment(), NewsAdapter.ClickListener {
     }
 
     private fun hideErrorMessage() {
-        binding.itemErrorMessage.root.visibility = View.GONE
+        binding.itemErrorMessage.visibility = View.GONE
     }
 
     private fun showErrorMessage(message: String) {
-        binding.itemErrorMessage.root.visibility = View.VISIBLE
-        binding.itemErrorMessage.tvErrorMessage.text = message
+        binding.itemErrorMessage.visibility = View.VISIBLE
+//        binding.itemErrorMessage.tvErrorMessage.text = message
     }
 
     override fun onclick(article: Article) {
-        val bundle = Bundle()
-        bundle.putSerializable(StringConstants.Article, article)
-        findNavController().navigate(R.id.articleFragment, bundle)
+        sharedViewModel.shareMessage(article)
+        findNavController().navigate(R.id.articleFragment)
     }
 
     override fun onPause() {

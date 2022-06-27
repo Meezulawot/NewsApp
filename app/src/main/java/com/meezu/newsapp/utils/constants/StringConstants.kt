@@ -16,7 +16,4 @@ object StringConstants {
     const val network_error = "No internet connection"
     const val conversion_error = "Conversion Error"
 
-
-
-
 }

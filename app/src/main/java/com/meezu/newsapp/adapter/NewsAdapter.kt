@@ -3,11 +3,9 @@ package com.meezu.newsapp.adapter
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.AdapterView
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.meezu.newsapp.databinding.LayoutItemArticleBinding
 import com.meezu.newsapp.models.Article
 
@@ -20,11 +18,7 @@ class NewsAdapter(
         val binding: LayoutItemArticleBinding
     ) : RecyclerView.ViewHolder(binding.root){
             fun bindItem(article: Article){
-                binding.tvTitle.text = article.title
-                binding.tvSource.text = article.source!!.name
-//                binding.tvPublishedAt.text = article.publishedAt
-                Glide.with(context).load(article.urlToImage).into(binding.imgArticle)
-
+                binding.article = article
                 binding.root.setOnClickListener {
                     listener.onclick(article)
                 }
@@ -56,9 +50,6 @@ class NewsAdapter(
     override fun onBindViewHolder(holder: ArticleViewHolder, position: Int) {
         val article = differ.currentList[position]
         holder.bindItem(article)
-//        holder.binding.root.setOnClickListener {
-//            listener.onclick(article)
-//        }
     }
 
     override fun getItemCount(): Int {

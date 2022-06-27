@@ -2,15 +2,10 @@ package com.meezu.newsapp.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentContainer
+import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.NavDestination
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.meezu.newsapp.R
 import com.meezu.newsapp.databinding.ActivityNewsBinding
 import com.meezu.newsapp.db.ArticleDatabase
@@ -23,8 +18,7 @@ class NewsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityNewsBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        binding =  DataBindingUtil.setContentView(this, R.layout.activity_news)
 
         val newsRepository = NewsRepository(ArticleDatabase(this))
         val viewModelProviderFactory = NewsViewModelProviderFactory(application, newsRepository)

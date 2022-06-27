@@ -7,8 +7,10 @@ import android.view.*
 import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuItemCompat
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
@@ -27,21 +29,22 @@ class SearchFragment : Fragment(), NewsAdapter.ClickListener {
 
     private lateinit var binding : FragmentSearchBinding
     private lateinit var viewModel: NewsViewModel
+    private lateinit var sharedViewModel: SharedViewModel
     private lateinit var newsAdapter: NewsAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
-        binding = FragmentSearchBinding.inflate(layoutInflater, container, false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_search, container, false)
         return (binding.root)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         (activity as AppCompatActivity).supportActionBar?.title = "";
-        viewModel = (activity as NewsActivity).viewModel
+        viewModel = ViewModelProvider(requireActivity()).get(NewsViewModel::class.java)
+        sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
         setRecyclerView()
         setViewModelObserver()
 
@@ -86,16 +89,13 @@ class SearchFragment : Fragment(), NewsAdapter.ClickListener {
     }
 
     override fun onclick(article: Article) {
-        val bundle = Bundle()
-        bundle.putSerializable(StringConstants.Article, article)
-        findNavController().navigate(R.id.articleFragment, bundle)
+        sharedViewModel.shareMessage(article)
+        findNavController().navigate(R.id.articleFragment)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setHasOptionsMenu(true)
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

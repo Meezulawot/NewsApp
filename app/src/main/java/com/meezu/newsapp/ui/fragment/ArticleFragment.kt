@@ -3,43 +3,60 @@ package com.meezu.newsapp.ui.fragment
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.*
-import android.webkit.WebViewClient
 import android.widget.Toast
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.navArgs
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
 import com.meezu.newsapp.R
 import com.meezu.newsapp.databinding.FragmentArticleBinding
-import com.meezu.newsapp.databinding.FragmentNewsBinding
 import com.meezu.newsapp.models.Article
 import com.meezu.newsapp.ui.NewsActivity
 import com.meezu.newsapp.ui.NewsViewModel
+import com.meezu.newsapp.utils.Resource
 import com.meezu.newsapp.utils.constants.StringConstants
+import com.meezu.newsapp.utils.loadImage
+import com.meezu.newsapp.utils.loadUrl
 
 class ArticleFragment : Fragment() {
 
+    var TAG = ArticleFragment::class.java.simpleName
     private lateinit var binding : FragmentArticleBinding
     private lateinit var viewModel : NewsViewModel
-    private var article: Article? = null
+    private lateinit var sharedViewModel: SharedViewModel
+    var article: Article? = null
+//    private val args: ArticleFragmentArgs by navArgs()
+//    val article = args.article
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentArticleBinding.inflate(layoutInflater, container, false)
+        binding = DataBindingUtil.inflate(inflater, R.layout.fragment_article, container, false)
         return (binding.root)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = (activity as NewsActivity).viewModel
-        article = arguments?.getSerializable(StringConstants.Article) as Article
+        viewModel = ViewModelProvider(requireActivity()).get(NewsViewModel::class.java)
+        sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
+//        article = arguments?.getSerializable(StringConstants.Article) as Article
+//        binding.articleData = article
 
-        binding.webView.apply{
-            webViewClient = WebViewClient()
-            loadUrl(article!!.url)
-        }
+//        binding.webView.apply{
+//            webViewClient = WebViewClient()
+//            loadUrl(article!!.url)
+//        }
+
+        sharedViewModel.sharedArticle.observe(viewLifecycleOwner, Observer {
+            binding.articleData = it
+            article = it
+        })
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -61,7 +78,7 @@ class ArticleFragment : Fragment() {
                 try {
                     val intent = Intent(Intent.ACTION_SEND)
                     intent.type = "text/plain"
-                    intent.putExtra(Intent.EXTRA_SUBJECT, article!!.source!!.name)
+                    intent.putExtra(Intent.EXTRA_SUBJECT,article!!.source!!.name)
 
                     val body = article!!.title + "\n" + article!!.url
                     intent.putExtra(Intent.EXTRA_TEXT,body)
