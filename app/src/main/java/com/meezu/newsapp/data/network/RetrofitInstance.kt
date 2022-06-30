@@ -1,9 +1,6 @@
-package com.meezu.newsapp.api
+package com.meezu.newsapp.data.network
 
-import com.meezu.newsapp.BuildConfig
 import com.meezu.newsapp.utils.constants.ApiConstants
-import com.meezu.newsapp.utils.constants.StringConstants
-import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit

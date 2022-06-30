@@ -1,6 +1,5 @@
 package com.meezu.newsapp.ui.fragment
 
-import android.app.ActionBar
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -15,17 +14,17 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.meezu.newsapp.R
-import com.meezu.newsapp.adapter.NewsAdapter
+import com.meezu.newsapp.ui.adapter.NewsAdapter
 import com.meezu.newsapp.databinding.FragmentSearchBinding
-import com.meezu.newsapp.models.Article
-import com.meezu.newsapp.ui.NewsActivity
-import com.meezu.newsapp.ui.NewsViewModel
+import com.meezu.newsapp.data.models.Article
+import com.meezu.newsapp.ui.listener.ClickListener
+import com.meezu.newsapp.ui.viewmodel.NewsViewModel
+import com.meezu.newsapp.ui.viewmodel.SharedViewModel
 import com.meezu.newsapp.utils.Resource
 import com.meezu.newsapp.utils.constants.StringConstants
-import java.util.*
 
 
-class SearchFragment : Fragment(), NewsAdapter.ClickListener {
+class SearchFragment : Fragment(), ClickListener {
 
     private lateinit var binding : FragmentSearchBinding
     private lateinit var viewModel: NewsViewModel
@@ -82,7 +81,7 @@ class SearchFragment : Fragment(), NewsAdapter.ClickListener {
     }
 
     private fun setRecyclerView() {
-        newsAdapter = NewsAdapter(requireContext(), this)
+        newsAdapter = NewsAdapter(this)
         binding.rvNews.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         binding.rvNews.adapter = newsAdapter

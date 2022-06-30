@@ -1,17 +1,17 @@
-package com.meezu.newsapp.ui
+package com.meezu.newsapp.ui.viewmodel
 
 import android.app.Application
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.meezu.newsapp.models.Article
-import com.meezu.newsapp.models.NewsResponse
-import com.meezu.newsapp.repository.NewsRepository
+import com.meezu.newsapp.data.models.Article
+import com.meezu.newsapp.data.models.NewsResponse
+import com.meezu.newsapp.data.repository.NewsRepository
 import com.meezu.newsapp.utils.NewsApplication
 import com.meezu.newsapp.utils.Resource
 import com.meezu.newsapp.utils.constants.StringConstants
@@ -24,8 +24,12 @@ class NewsViewModel(
     private val newsRepository: NewsRepository
 ) : AndroidViewModel(application) {
 
+    val TAG = NewsViewModel::class.java.simpleName
     val news: MutableLiveData<Resource<NewsResponse>> = MutableLiveData()
     val searchNews: MutableLiveData<Resource<NewsResponse>> = MutableLiveData()
+
+    var pageNumber = 1
+    var newsResponse: NewsResponse? = null
 
     init {
         getTrendingNews(StringConstants.country_code)
@@ -35,7 +39,7 @@ class NewsViewModel(
         news.postValue(Resource.Loading())
         try {
             if (checkInternetConnection()) {
-                val response = newsRepository.getTrendingNews(country)
+                val response = newsRepository.getTrendingNews(country, pageNumber)
                     news.postValue(handleNewsResponse(response))
             } else {
                 news.postValue(Resource.Error(StringConstants.network_error))
@@ -52,7 +56,7 @@ class NewsViewModel(
         searchNews.postValue(Resource.Loading())
         try {
             if (checkInternetConnection()) {
-                val response = newsRepository.searchNews(searchQuery)
+                val response = newsRepository.searchNews(searchQuery, pageNumber)
                 searchNews.postValue(handleNewsResponse(response))
             } else {
                 searchNews.postValue(Resource.Error(StringConstants.network_error))
@@ -78,7 +82,15 @@ class NewsViewModel(
     private fun handleNewsResponse(response: Response<NewsResponse>): Resource<NewsResponse> {
         if (response.isSuccessful) {
             response.body()?.let { resultResponse ->
-                return Resource.Success(resultResponse)
+                pageNumber++
+                if(newsResponse != null){
+                    val oldArticles = newsResponse?.articles
+                    val newArticles = resultResponse.articles
+                    oldArticles?.addAll(newArticles!!)
+
+                    Log.d(TAG, "handleNewsResponse: $oldArticles")
+                }
+                return Resource.Success(newsResponse ?: resultResponse)
             }
         }
         return Resource.Error(response.message())

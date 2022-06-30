@@ -1,16 +1,16 @@
-package com.meezu.newsapp.db
+package com.meezu.newsapp.data.db
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.meezu.newsapp.models.Article
+import com.meezu.newsapp.data.models.Article
 import com.meezu.newsapp.utils.constants.StringConstants
 
 @Database(
     entities = [Article::class],
-    version = 3,
+    version = 4,
     exportSchema = false
 )
 

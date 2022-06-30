@@ -1,8 +1,8 @@
-package com.meezu.newsapp.ui.fragment
+package com.meezu.newsapp.ui.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.meezu.newsapp.models.Article
+import com.meezu.newsapp.data.models.Article
 
 class SharedViewModel : ViewModel(){
 

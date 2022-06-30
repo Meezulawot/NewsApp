@@ -6,7 +6,7 @@
     <data>
         <variable
             name="articleData"
-            type="com.meezu.newsapp.models.Article"/>
+            type="com.meezu.newsapp.data.models.Article"/>
     </data>
 
     <RelativeLayout

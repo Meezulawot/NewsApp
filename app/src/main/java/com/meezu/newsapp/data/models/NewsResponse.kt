@@ -1,10 +1,9 @@
-package com.meezu.newsapp.models
+package com.meezu.newsapp.data.models
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
-import com.meezu.newsapp.models.Article
 
-data class NewsResponse(
+class NewsResponse(
 
     @SerializedName("articles")
     @Expose

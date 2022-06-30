@@ -1,9 +1,9 @@
-package com.meezu.newsapp.ui
+package com.meezu.newsapp.ui.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.meezu.newsapp.repository.NewsRepository
+import com.meezu.newsapp.data.repository.NewsRepository
 
 class NewsViewModelProviderFactory(
     private val application: Application,

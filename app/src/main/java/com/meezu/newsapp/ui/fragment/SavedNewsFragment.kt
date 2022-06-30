@@ -5,7 +5,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -15,15 +14,15 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.snackbar.Snackbar
 import com.meezu.newsapp.R
-import com.meezu.newsapp.adapter.NewsAdapter
-import com.meezu.newsapp.databinding.FragmentNewsBinding
+import com.meezu.newsapp.ui.adapter.NewsAdapter
 import com.meezu.newsapp.databinding.FragmentSavedNewsBinding
-import com.meezu.newsapp.models.Article
-import com.meezu.newsapp.ui.NewsActivity
-import com.meezu.newsapp.ui.NewsViewModel
+import com.meezu.newsapp.data.models.Article
+import com.meezu.newsapp.ui.listener.ClickListener
+import com.meezu.newsapp.ui.viewmodel.NewsViewModel
+import com.meezu.newsapp.ui.viewmodel.SharedViewModel
 import com.meezu.newsapp.utils.constants.StringConstants
 
-class SavedNewsFragment : Fragment(), NewsAdapter.ClickListener {
+class SavedNewsFragment : Fragment(), ClickListener {
 
     private lateinit var binding : FragmentSavedNewsBinding
     private lateinit var viewModel: NewsViewModel
@@ -83,7 +82,7 @@ class SavedNewsFragment : Fragment(), NewsAdapter.ClickListener {
     }
 
     private fun setRecyclerView(){
-        newsAdapter = NewsAdapter(requireContext(), this)
+        newsAdapter = NewsAdapter( this)
         binding.rvSavedNews.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         binding.rvSavedNews.adapter = newsAdapter

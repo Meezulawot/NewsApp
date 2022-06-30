@@ -5,7 +5,7 @@
     <data>
         <variable
             name="article"
-            type="com.meezu.newsapp.models.Article" />
+            type="com.meezu.newsapp.data.models.Article" />
     </data>
 
     <androidx.cardview.widget.CardView
@@ -24,8 +24,8 @@
                 android:id="@+id/imgArticle"
                 android:layout_width="150dp"
                 android:layout_height="90dp"
-                imageUrl="@{article.urlToImage}"
-                android:scaleType="centerCrop" />
+                android:scaleType="centerCrop"
+                imageUrl="@{article.urlToImage}"/>
 
             <TextView
                 android:id="@+id/tvTitle"
@@ -53,19 +53,6 @@
                 android:textColor="@color/burnt_orange"
                 android:layout_toEndOf="@id/imgArticle"
                 android:layout_alignParentBottom="true" />
-
-            <!--        <TextView-->
-            <!--            android:id="@+id/tvPublishedAt"-->
-            <!--            android:layout_width="70dp"-->
-            <!--            android:layout_height="wrap_content"-->
-            <!--            android:layout_marginVertical="5dp"-->
-            <!--            android:layout_marginHorizontal="7dp"-->
-            <!--            android:text="@string/published_at"-->
-            <!--            android:ellipsize="end"-->
-            <!--            android:maxLines="1"-->
-            <!--            android:textSize="13sp"-->
-            <!--            android:layout_alignParentEnd="true"-->
-            <!--            android:layout_alignParentBottom="true"/>-->
 
         </RelativeLayout>
 

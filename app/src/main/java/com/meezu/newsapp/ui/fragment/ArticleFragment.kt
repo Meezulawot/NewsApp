@@ -3,25 +3,20 @@ package com.meezu.newsapp.ui.fragment
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.navigation.fragment.navArgs
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
 import com.meezu.newsapp.R
 import com.meezu.newsapp.databinding.FragmentArticleBinding
-import com.meezu.newsapp.models.Article
-import com.meezu.newsapp.ui.NewsActivity
-import com.meezu.newsapp.ui.NewsViewModel
-import com.meezu.newsapp.utils.Resource
+import com.meezu.newsapp.data.models.Article
+import com.meezu.newsapp.ui.viewmodel.NewsViewModel
+import com.meezu.newsapp.ui.viewmodel.SharedViewModel
 import com.meezu.newsapp.utils.constants.StringConstants
-import com.meezu.newsapp.utils.loadImage
-import com.meezu.newsapp.utils.loadUrl
 
 class ArticleFragment : Fragment() {
 
@@ -30,8 +25,6 @@ class ArticleFragment : Fragment() {
     private lateinit var viewModel : NewsViewModel
     private lateinit var sharedViewModel: SharedViewModel
     var article: Article? = null
-//    private val args: ArticleFragmentArgs by navArgs()
-//    val article = args.article
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,13 +38,6 @@ class ArticleFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(requireActivity()).get(NewsViewModel::class.java)
         sharedViewModel = ViewModelProvider(requireActivity()).get(SharedViewModel::class.java)
-//        article = arguments?.getSerializable(StringConstants.Article) as Article
-//        binding.articleData = article
-
-//        binding.webView.apply{
-//            webViewClient = WebViewClient()
-//            loadUrl(article!!.url)
-//        }
 
         sharedViewModel.sharedArticle.observe(viewLifecycleOwner, Observer {
             binding.articleData = it

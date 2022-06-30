@@ -1,4 +1,4 @@
-package com.meezu.newsapp.ui
+package com.meezu.newsapp.ui.base
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -7,9 +7,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.meezu.newsapp.R
+import com.meezu.newsapp.data.db.ArticleDatabase
+import com.meezu.newsapp.data.repository.NewsRepository
 import com.meezu.newsapp.databinding.ActivityNewsBinding
-import com.meezu.newsapp.db.ArticleDatabase
-import com.meezu.newsapp.repository.NewsRepository
+import com.meezu.newsapp.ui.viewmodel.NewsViewModel
+import com.meezu.newsapp.ui.viewmodel.NewsViewModelProviderFactory
 
 class NewsActivity : AppCompatActivity() {
 
@@ -29,6 +31,4 @@ class NewsActivity : AppCompatActivity() {
         binding.bottomNavigationView.setupWithNavController(navController)
 
     }
-
-
 }

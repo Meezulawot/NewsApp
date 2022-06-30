@@ -16,4 +16,5 @@
     <string name="trending_news">Trending News</string>
     <string name="share">Share</string>
     <string name="empty_message">Nothing to show</string>
+    <string name="country_code">us</string>
 </resources>

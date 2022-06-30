@@ -1,7 +1,7 @@
-package com.meezu.newsapp.db
+package com.meezu.newsapp.data.db
 
 import androidx.room.TypeConverter
-import com.meezu.newsapp.models.Source
+import com.meezu.newsapp.data.models.Source
 
 
 class Converters {

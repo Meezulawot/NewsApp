@@ -1,6 +1,6 @@
-package com.meezu.newsapp.api
+package com.meezu.newsapp.data.network
 
-import com.meezu.newsapp.models.NewsResponse
+import com.meezu.newsapp.data.models.NewsResponse
 import com.meezu.newsapp.utils.constants.ApiConstants
 import com.meezu.newsapp.utils.constants.StringConstants
 import retrofit2.Response
@@ -13,6 +13,8 @@ interface NewsAPI {
     suspend fun getTrendingNews(
         @Query("country")
         countryCode: String,
+        @Query("page")
+        pageNumber: Int,
         @Query(StringConstants.ApiKey)
         apiKey: String = ApiConstants.API_KEY
     ) : Response<NewsResponse>
@@ -21,6 +23,8 @@ interface NewsAPI {
     suspend fun getSearchedNews(
         @Query("q")
         searchQuery: String,
+        @Query("page")
+        pageNumber: Int,
         @Query(StringConstants.ApiKey)
         apiKey: String = ApiConstants.API_KEY
     ) : Response<NewsResponse>
