@@ -88,7 +88,7 @@ class NewsViewModel(
                     val newArticles = resultResponse.articles
                     oldArticles?.addAll(newArticles!!)
 
-                    Log.d(TAG, "handleNewsResponse: $oldArticles")
+//                    /Log.d(TAG, "handleNewsResponse: $oldArticles")
                 }
                 return Resource.Success(newsResponse ?: resultResponse)
             }
