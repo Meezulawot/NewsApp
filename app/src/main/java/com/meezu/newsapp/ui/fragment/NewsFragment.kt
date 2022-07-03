@@ -2,6 +2,7 @@ package com.meezu.newsapp.ui.fragment
 
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.*
 import android.widget.AbsListView
 import androidx.databinding.DataBindingUtil
@@ -24,6 +25,7 @@ import com.meezu.newsapp.utils.constants.StringConstants
 
 class NewsFragment : Fragment(), ClickListener {
 
+    var TAG = NewsFragment::class.java.simpleName
     private lateinit var binding : FragmentNewsBinding
     private lateinit var viewModel: NewsViewModel
     private lateinit var sharedViewModel: SharedViewModel
@@ -76,13 +78,13 @@ class NewsFragment : Fragment(), ClickListener {
             val totalItemCount: Int = layoutManager.itemCount
             val firstVisibleItemPosition: Int = layoutManager.findFirstVisibleItemPosition()
 
-            if (!isLoading && !isLastPage && !isScrolling) {
+            if (!isLoading && !isLastPage && isScrolling) {
                 if (visibleItemCount + firstVisibleItemPosition >= totalItemCount
                     && firstVisibleItemPosition >= 0
                 ) {
-                    isLoading = true
-//                    viewModel.pageNumber++
+                    isScrolling = false
                     viewModel.getTrendingNews(StringConstants.country_code)
+//
                 }
             }
         }
@@ -96,18 +98,15 @@ class NewsFragment : Fragment(), ClickListener {
         }
     }
 
-
-
     private fun setViewModelObserver() {
-
         viewModel.news.observe(viewLifecycleOwner, Observer { response ->
             when (response) {
                 is Resource.Success -> {
                     hideProgressBar()
-                    hideErrorMessage()
+//                    hideErrorMessage()
                     response.data?.let { newsResponse ->
-                        newsAdapter.differ.submitList(newsResponse.articles)
-                        val totalPages = newsResponse.totalResults!! / 20  + 2
+                        newsAdapter.differ.submitList(newsResponse.articles?.toList())
+                        val totalPages = newsResponse.totalResults!! / 6 + 2
                         isLastPage = viewModel.pageNumber == totalPages
                         if(isLastPage) {
                             binding.rvNews.setPadding(0, 0, 0, 0)
@@ -117,8 +116,8 @@ class NewsFragment : Fragment(), ClickListener {
                 is Resource.Error -> {
                     hideProgressBar()
                     response.message?.let { message ->
-                        Snackbar.make(requireView(), message, Snackbar.LENGTH_SHORT).show()
-                        showErrorMessage(message)
+//                        showErrorMessage(message)
+                        Log.d(TAG, "setViewModelObserver: $message")
                     }
                 }
                 is Resource.Loading -> {
@@ -134,20 +133,23 @@ class NewsFragment : Fragment(), ClickListener {
 
     private fun hideProgressBar() {
         binding.progressBar.visibility = View.INVISIBLE
+        isLoading = false
     }
 
     private fun showProgressBar() {
         binding.progressBar.visibility = View.VISIBLE
+        isLoading = true
     }
 
-    private fun hideErrorMessage() {
-        binding.itemErrorMessage.root.visibility = View.GONE
-    }
-
-    private fun showErrorMessage(message: String) {
-        binding.itemErrorMessage.root.visibility = View.VISIBLE;
-        binding.itemErrorMessage.tvErrorMessage.text = message
-    }
+//    private fun hideErrorMessage() {
+//        binding.itemErrorMessage.root.visibility = View.GONE
+//    }
+//
+//    private fun showErrorMessage(message: String) {
+//        binding.itemErrorMessage.root.visibility = View.VISIBLE;
+//        binding.itemErrorMessage.tvErrorMessage.text = message
+//    }
+//
 
     override fun onclick(article: Article) {
         sharedViewModel.shareMessage(article)

@@ -3,6 +3,7 @@ package com.meezu.newsapp.ui.fragment
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.widget.AbsListView
 import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuItemCompat
@@ -12,7 +13,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.snackbar.Snackbar
+import androidx.recyclerview.widget.RecyclerView
 import com.meezu.newsapp.R
 import com.meezu.newsapp.ui.adapter.NewsAdapter
 import com.meezu.newsapp.databinding.FragmentSearchBinding
@@ -26,6 +27,7 @@ import com.meezu.newsapp.utils.constants.StringConstants
 
 class SearchFragment : Fragment(), ClickListener {
 
+    var TAG = SearchFragment::class.java.simpleName
     private lateinit var binding : FragmentSearchBinding
     private lateinit var viewModel: NewsViewModel
     private lateinit var sharedViewModel: SharedViewModel
@@ -55,13 +57,17 @@ class SearchFragment : Fragment(), ClickListener {
                 is Resource.Success -> {
                     hideProgressBar()
                     response.data?.let { newsResponse ->
-                        newsAdapter.differ.submitList(newsResponse.articles)
+                        newsAdapter.differ.submitList(newsResponse.articles!!.toList())
+                        val totalPages = newsResponse.totalResults!! / 10  + 2
+                        isLastPage = viewModel.pageNumber == totalPages
+                        if(isLastPage) {
+                            binding.rvNews.setPadding(0, 0, 0, 0)
+                        }
                     }
                 }
                 is Resource.Error -> {
                     hideProgressBar()
                     response.message?.let { message ->
-                        Snackbar.make(requireView(), message, Snackbar.LENGTH_LONG).show()
                         Log.e("SearchFragment", message)
                     }
                 }
@@ -72,19 +78,56 @@ class SearchFragment : Fragment(), ClickListener {
         })
     }
 
+    var isLoading : Boolean = false
+    var isLastPage : Boolean = false
+    var isScrolling : Boolean = false
+
+    private val scrollListener = object : RecyclerView.OnScrollListener(){
+        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+            super.onScrolled(recyclerView, dx, dy)
+
+            val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+            val visibleItemCount: Int = layoutManager.childCount
+            val totalItemCount: Int = layoutManager.itemCount
+            val firstVisibleItemPosition: Int = layoutManager.findFirstVisibleItemPosition()
+
+            if (!isLoading && !isLastPage && isScrolling) {
+                if (visibleItemCount + firstVisibleItemPosition >= totalItemCount
+                    && firstVisibleItemPosition >= 0 && totalItemCount >= 10
+                ) {
+                    viewModel.getTrendingNews(StringConstants.country_code)
+                    isScrolling = false
+                }
+            }
+        }
+
+        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+            super.onScrollStateChanged(recyclerView, newState)
+
+            if(newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL){
+                isScrolling = true
+            }
+        }
+    }
+
     private fun hideProgressBar() {
         binding.progressBar.visibility = View.INVISIBLE
+        isLoading = false
     }
 
     private fun showProgressBar() {
         binding.progressBar.visibility = View.VISIBLE
+        isLoading = true
     }
 
     private fun setRecyclerView() {
         newsAdapter = NewsAdapter(this)
-        binding.rvNews.layoutManager =
-            LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-        binding.rvNews.adapter = newsAdapter
+        binding.rvNews.apply {
+            adapter = newsAdapter
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            addOnScrollListener(this@SearchFragment.scrollListener)
+        }
+
     }
 
     override fun onclick(article: Article) {

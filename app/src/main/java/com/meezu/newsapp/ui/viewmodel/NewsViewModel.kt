@@ -83,14 +83,16 @@ class NewsViewModel(
         if (response.isSuccessful) {
             response.body()?.let { resultResponse ->
                 pageNumber++
-                if(newsResponse != null){
+                if(newsResponse == null){
+                    newsResponse = resultResponse
+                }else{
                     val oldArticles = newsResponse?.articles
                     val newArticles = resultResponse.articles
                     oldArticles?.addAll(newArticles!!)
 
-//                    /Log.d(TAG, "handleNewsResponse: $oldArticles")
+                    Log.d(TAG, "handleNewsResponse: $oldArticles")
                 }
-                return Resource.Success(newsResponse ?: resultResponse)
+                return Resource.Success(newsResponse?:resultResponse)
             }
         }
         return Resource.Error(response.message())

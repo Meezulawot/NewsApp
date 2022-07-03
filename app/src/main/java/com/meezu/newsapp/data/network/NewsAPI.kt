@@ -14,7 +14,7 @@ interface NewsAPI {
         @Query("country")
         countryCode: String,
         @Query("page")
-        pageNumber: Int,
+        pageNumber: Int = 1,
         @Query(StringConstants.ApiKey)
         apiKey: String = ApiConstants.API_KEY
     ) : Response<NewsResponse>
@@ -24,7 +24,7 @@ interface NewsAPI {
         @Query("q")
         searchQuery: String,
         @Query("page")
-        pageNumber: Int,
+        pageNumber: Int = 1,
         @Query(StringConstants.ApiKey)
         apiKey: String = ApiConstants.API_KEY
     ) : Response<NewsResponse>
