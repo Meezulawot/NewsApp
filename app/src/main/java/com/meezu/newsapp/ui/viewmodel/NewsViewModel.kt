@@ -32,10 +32,10 @@ class NewsViewModel(
     var newsResponse: NewsResponse? = null
 
     init {
-        getTrendingNews(StringConstants.country_code)
+        getTrendingNews(StringConstants.country_code, pageNumber)
     }
 
-    fun getTrendingNews(country: String) = viewModelScope.launch {
+    fun getTrendingNews(country: String, pageNumber: Int) = viewModelScope.launch {
         news.postValue(Resource.Loading())
         try {
             if (checkInternetConnection()) {
@@ -52,7 +52,7 @@ class NewsViewModel(
         }
     }
 
-    fun searchNews(searchQuery: String) = viewModelScope.launch {
+    fun searchNews(searchQuery: String, pageNumber: Int) = viewModelScope.launch {
         searchNews.postValue(Resource.Loading())
         try {
             if (checkInternetConnection()) {
@@ -82,15 +82,12 @@ class NewsViewModel(
     private fun handleNewsResponse(response: Response<NewsResponse>): Resource<NewsResponse> {
         if (response.isSuccessful) {
             response.body()?.let { resultResponse ->
-                pageNumber++
                 if(newsResponse == null){
                     newsResponse = resultResponse
                 }else{
                     val oldArticles = newsResponse?.articles
                     val newArticles = resultResponse.articles
                     oldArticles?.addAll(newArticles!!)
-
-                    Log.d(TAG, "handleNewsResponse: $oldArticles")
                 }
                 return Resource.Success(newsResponse?:resultResponse)
             }

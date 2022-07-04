@@ -12,7 +12,7 @@
         tools:context=".ui.fragment.SearchFragment">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvNews"
+            android:id="@+id/rvSearchNews"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
@@ -21,10 +21,11 @@
             style="?attr/progressBarStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="20dp"
             android:background="@android:color/transparent"
             android:visibility="invisible" />
-
 
     </RelativeLayout>
 </layout>

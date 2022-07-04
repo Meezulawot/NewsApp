@@ -13,18 +13,6 @@ import com.meezu.newsapp.ui.viewholder.ArticleViewHolder
 
 class NewsAdapter( val listener: ClickListener) : RecyclerView.Adapter<ArticleViewHolder>() {
 
-//    inner class ArticleViewHolder(
-//        val binding: LayoutItemArticleBinding
-//    ) : RecyclerView.ViewHolder(binding.root){
-//            fun bindItem(article: Article){
-//                binding.article = article
-//                Glide.with(binding.imgArticle.context).load(article.urlToImage).into(binding.imgArticle)
-//                binding.root.setOnClickListener {
-//                    listener.onclick(article)
-//                }
-//            }
-//    }
-
     private val differCallback = object: DiffUtil.ItemCallback<Article>(){
         override fun areItemsTheSame(oldItem: Article, newItem: Article): Boolean {
             return oldItem.url == newItem.url

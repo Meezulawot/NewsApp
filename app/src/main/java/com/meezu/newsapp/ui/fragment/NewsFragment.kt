@@ -4,20 +4,18 @@ import android.os.Bundle
 import android.os.Handler
 import android.util.Log
 import android.view.*
-import android.widget.AbsListView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.snackbar.Snackbar
 import com.meezu.newsapp.R
 import com.meezu.newsapp.data.models.Article
 import com.meezu.newsapp.databinding.FragmentNewsBinding
 import com.meezu.newsapp.ui.adapter.NewsAdapter
 import com.meezu.newsapp.ui.listener.ClickListener
+import com.meezu.newsapp.ui.listener.ScrollRecyclerListener
 import com.meezu.newsapp.ui.viewmodel.NewsViewModel
 import com.meezu.newsapp.ui.viewmodel.SharedViewModel
 import com.meezu.newsapp.utils.Resource
@@ -31,6 +29,7 @@ class NewsFragment : Fragment(), ClickListener {
     private lateinit var sharedViewModel: SharedViewModel
     private lateinit var newsAdapter: NewsAdapter
     val handler = Handler()
+    val page = 1
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,7 +50,7 @@ class NewsFragment : Fragment(), ClickListener {
 
     private val refresh: Runnable = object : Runnable {
         override fun run() {
-            viewModel.getTrendingNews(StringConstants.country_code)
+            viewModel.getTrendingNews(StringConstants.country_code, page)
             handler.postDelayed(this, 5 * 60000)
         }
     }
@@ -61,40 +60,12 @@ class NewsFragment : Fragment(), ClickListener {
         binding.rvNews.apply {
             adapter = newsAdapter
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-            addOnScrollListener(scrollListener)
-        }
-    }
-
-    var isLoading : Boolean = false
-    var isLastPage : Boolean = false
-    var isScrolling : Boolean = false
-
-    private val scrollListener = object : RecyclerView.OnScrollListener(){
-        override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-            super.onScrolled(recyclerView, dx, dy)
-
-            val layoutManager = recyclerView.layoutManager as LinearLayoutManager
-            val visibleItemCount: Int = layoutManager.childCount
-            val totalItemCount: Int = layoutManager.itemCount
-            val firstVisibleItemPosition: Int = layoutManager.findFirstVisibleItemPosition()
-
-            if (!isLoading && !isLastPage && isScrolling) {
-                if (visibleItemCount + firstVisibleItemPosition >= totalItemCount
-                    && firstVisibleItemPosition >= 0
-                ) {
-                    isScrolling = false
-                    viewModel.getTrendingNews(StringConstants.country_code)
-//
+            addOnScrollListener(object : ScrollRecyclerListener() {
+                override fun onLoadMore(page: Int, totalItemsCount: Int) {
+                    viewModel.getTrendingNews(StringConstants.country_code, page)
+                    return
                 }
-            }
-        }
-
-        override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-            super.onScrollStateChanged(recyclerView, newState)
-
-            if(newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL){
-                isScrolling = true
-            }
+            })
         }
     }
 
@@ -103,20 +74,13 @@ class NewsFragment : Fragment(), ClickListener {
             when (response) {
                 is Resource.Success -> {
                     hideProgressBar()
-//                    hideErrorMessage()
                     response.data?.let { newsResponse ->
-                        newsAdapter.differ.submitList(newsResponse.articles?.toList())
-                        val totalPages = newsResponse.totalResults!! / 6 + 2
-                        isLastPage = viewModel.pageNumber == totalPages
-                        if(isLastPage) {
-                            binding.rvNews.setPadding(0, 0, 0, 0)
-                        }
+                        newsAdapter.differ.submitList(newsResponse.articles)
                     }
                 }
                 is Resource.Error -> {
                     hideProgressBar()
                     response.message?.let { message ->
-//                        showErrorMessage(message)
                         Log.d(TAG, "setViewModelObserver: $message")
                     }
                 }
@@ -126,19 +90,17 @@ class NewsFragment : Fragment(), ClickListener {
             }
         })
 
-        binding.itemErrorMessage.btnRetry.setOnClickListener {
-            viewModel.getTrendingNews(StringConstants.country_code)
-        }
+//        binding.itemErrorMessage.btnRetry.setOnClickListener {
+//            viewModel.getTrendingNews(StringConstants.country_code, page)
+//        }
     }
 
     private fun hideProgressBar() {
         binding.progressBar.visibility = View.INVISIBLE
-        isLoading = false
     }
 
     private fun showProgressBar() {
         binding.progressBar.visibility = View.VISIBLE
-        isLoading = true
     }
 
 //    private fun hideErrorMessage() {
